@@ -54,6 +54,36 @@
             <a class="nav-link" href="pricing.html">about us</a>
           </li>
         </ul>
+        <script>
+          function login() {
+            // Log the user in via Twitter
+            var provider = new firebase.auth.TwitterAuthProvider();
+            firebase.auth().signInWithPopup(provider).catch(function(error) {
+              console.log("Error authenticating user:", error);
+            });
+          }
+    
+          firebase.auth().onAuthStateChanged(function(user) {
+            // Once authenticated, instantiate Firechat with the logged in user
+            if (user) {
+              initChat(user);
+            }
+          });
+    
+          function initChat(user) {
+            // Get a Firebase Database ref
+            var chatRef = firebase.database().ref("chat");
+    
+            // Create a Firechat instance
+            var chat = new FirechatUI(chatRef, document.getElementById("firechat-wrapper"));
+    
+            // Set the Firechat user
+            chat.setUser(user.uid, user.displayName);
+          }
+        </script>
+        <div id="firechat-wrapper">
+          <button onclick="login('twitter');">Login with Twitter</button>
+        </div>
         <a class="btn navbar-btn btn-secondary mx-1" href="#download">Try it out!</a>
         <a class="btn navbar-btn btn-secondary mx-1" href="#download">Sign in</a>
       </div>
